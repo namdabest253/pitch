@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Example ML Project",
+    "url": "https://github.com/yourname/ml-project",
+    "description": "A machine learning project that predicts X using Y. Replace this with your actual project.",
+    "technologies": ["Python", "PyTorch", "scikit-learn"],
+    "keyDecisions": [
+      "Chose transformer architecture over LSTM because of better long-range dependency handling",
+      "Used cross-validation with stratified splits to handle class imbalance"
+    ]
+  },
+  {
+    "name": "Example Web App",
+    "url": "https://github.com/yourname/web-app",
+    "description": "A full-stack web application that does X. Replace this with your actual project.",
+    "technologies": ["TypeScript", "React", "Node.js", "PostgreSQL"],
+    "keyDecisions": [
+      "Used server-side rendering for SEO and initial load performance",
+      "Chose PostgreSQL over MongoDB for relational data integrity"
+    ]
+  }
+]
