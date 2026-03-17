@@ -1,0 +1,75 @@
+{
+  "strengths": [
+    "Strong debugging skills — tracked down a LayerNorm inverse transform bug that recovered 47.5pp of model accuracy without retraining",
+    "Can work across the full stack — built everything from PyTorch model architectures to React frontends to REST APIs",
+    "Willing to iterate aggressively — went through 10 architecture iterations on the Minecraft voxel generation project to improve accuracy from 21.6% to 66.9%"
+  ],
+  "weaknesses": [
+    "Fill in your real weaknesses here — be honest, the agent will challenge you on these",
+    "Example: Sometimes go too deep into implementation before stepping back to validate the approach"
+  ],
+  "stories": [
+    {
+      "title": "Debugging the VAE generation pipeline",
+      "tags": ["technical-challenge", "problem-solving", "failure-then-recovery"],
+      "situation": "The Minecraft 3D voxel generation model was producing garbled outputs despite the VAE training looking healthy. Reconstruction accuracy was stuck at ~19%.",
+      "task": "Find the root cause of generation failures and fix the pipeline without retraining the model from scratch.",
+      "action": "Traced the issue to a Straight-Through Estimator implementation problem and a LayerNorm inverse transform bug in the generation pipeline. Implemented the STE fix and corrected the LayerNorm transform.",
+      "result": "Recovered 47.5 percentage points of accuracy without any model retraining. Final reconstruction accuracy reached 66.9% after architecture iteration.",
+      "lessons": "Always validate the full inference pipeline separately from training. A model can train perfectly but still fail if the generation path has bugs."
+    },
+    {
+      "title": "Building the RAG chatbot at Driving Forward",
+      "tags": ["impact", "ownership", "technical-challenge"],
+      "situation": "Driving Forward needed a way for students to get answers about 40+ university partner programs, but the information was scattered across different websites with no unified search.",
+      "task": "Build a chatbot that could accurately answer questions using real university data while minimizing hallucinations.",
+      "action": "Built a RAG pipeline using Google Gemini with ChromaDB for vector storage. Ingested and indexed data from 40+ university websites using semantic embeddings. Built the full stack — React frontend, FastAPI backend with REST APIs.",
+      "result": "Reduced LLM hallucinations by 60%. Deployed on Render with <80ms average response latency.",
+      "lessons": "Fill in what you learned from this experience."
+    },
+    {
+      "title": "Designing the multi-agent debate system",
+      "tags": ["architecture", "creativity", "technical-depth"],
+      "situation": "Wanted to explore whether multiple AI agents debating could produce more reliable research analysis than a single LLM.",
+      "task": "Design and build a multi-agent system that could conduct structured research debates with real academic sources.",
+      "action": "Architected 11 Claude Code agents across three epistemological roles. Built a supervisor that orchestrates 2-round debates with post-debate falsification and overconfidence calibration. Integrated arXiv and Semantic Scholar APIs for evidence retrieval.",
+      "result": "System aggregates findings from 15+ academic surveys per query. Caching reduces repeat query latency to <100ms.",
+      "lessons": "Fill in what you learned about multi-agent systems, LLM limitations, etc."
+    },
+    {
+      "title": "Rainier Route — solving a personal commute problem",
+      "tags": ["initiative", "user-focused", "full-stack"],
+      "situation": "Seattle's public transit and biking infrastructure are disconnected — no app combines bike routes with transit schedules for multi-modal commuting.",
+      "task": "Build an app that generates optimal bike-to-transit route combinations for Seattle commuters.",
+      "action": "Designed a multi-modal routing engine scoring 5 parallel route combinations using Haversine distance optimization. Built a Node.js API orchestrating Google Maps and GTFS-Realtime feeds. Built React frontend with dynamic polyline rendering.",
+      "result": "Reduced estimated commute times by up to 20%. Under 500ms per route calculation. 4.3/5 usability rating in user testing.",
+      "lessons": "Fill in what you learned from this project."
+    },
+    {
+      "title": "Syncy — wrangling 4 different OAuth flows",
+      "tags": ["technical-challenge", "full-stack", "persistence"],
+      "situation": "Wanted to build a playlist sharing app but each music streaming service (Spotify, Apple Music, YouTube Music, SpotAPI) has completely different authentication patterns — OAuth 2.0 PKCE, MusicKit JS, device code flows.",
+      "task": "Build a unified auth and track matching system across 4 platforms with different APIs, token formats, and music catalogs.",
+      "action": "Implemented OAuth 2.0 PKCE and device code flows with encrypted token storage and auto-refresh. Engineered a track normalization pipeline using ISRC codes for cross-platform matching with a fuzzy search fallback (artist + title + duration tolerance). Built a TrackMapping cache layer to minimize redundant API calls.",
+      "result": "Platform supports playlist conversion across all 4 services with batch processing, duplicate prevention, and JSONB track metadata storage across 5 database models.",
+      "lessons": "Fill in what you learned — dealing with inconsistent APIs, caching strategies, etc."
+    },
+    {
+      "title": "Emergency Copilot — real-time AI threat detection hackathon",
+      "tags": ["teamwork", "time-pressure", "system-design", "real-time"],
+      "situation": "Hackathon project to build an AI-powered CCTV surveillance platform that could detect threats in real-time and alert dispatchers.",
+      "task": "Design and build a two-stage detection pipeline and real-time dispatcher dashboard under time pressure.",
+      "action": "Built a two-stage pipeline: Overshoot SDK for rapid 1-second clip analysis, then batched snapshots fed into Gemini 2.5-flash for detailed incident timelines. Engineered WebSocket snapshot ingestion with SSE broadcast, Haversine-based geospatial clustering (50m radius, 1hr window), and LiveKit WebRTC for sub-second latency video streaming. Built dispatcher dashboard with Leaflet map, live feeds, and AI timelines.",
+      "result": "Full working platform with 4 database tables, 7 custom React hooks, real-time alert system, and AI-generated event timelines with confidence scoring.",
+      "lessons": "Fill in what you learned — working under pressure, making architecture decisions fast, team coordination, etc."
+    }
+  ],
+  "values": [
+    "Fill in what drives you — why CS/DS, what problems excite you",
+    "Example: I care about building things that solve real problems I've personally experienced (like Rainier Route)"
+  ],
+  "goals": [
+    "Fill in your career goals",
+    "Example: Want to work on ML infrastructure / applied ML / systems engineering"
+  ]
+}

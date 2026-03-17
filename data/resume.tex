@@ -1,0 +1,129 @@
+\documentclass[10pt]{article}
+\renewcommand{\rmdefault}{bch} % Bitstream Charter is a thicker serif font
+\usepackage[margin=0.7in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{multicol}
+
+\pagestyle{empty}
+
+% Formatting sections
+\titleformat{\section}[block]{\large\bfseries}{\thesection}{1em}{}[\titlerule\vspace{0.6ex}]
+\titlespacing*{\section}{0pt}{0.3em}{0em}
+
+\setlist[itemize]{noitemsep, topsep=0pt, left=1em}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE Nam Nguyen} \\[0.5ex]
+    206-432-0336 \textbar{} \href{mailto:nhnguyen@uchicago.edu}
+    {nhnguyen@uchicago.edu} \\[0.5ex]
+    {Seattle, WA} \textbar{}
+    \href{https://github.com/namdabest253}{github.com/namdabest253} \textbar{} 
+    \href{https://www.linkedin.com/in/nam-nguyen-ab93b6333/}{linkedin.com/in/nam-nguyen-ab93b6333/}
+\end{center}
+
+\section*{Education}
+\textbf{The University of Chicago}\hfill Chicago, IL\\
+B.S. Computer Science, B.S. Data Science\hfill \textit{Expected: May 2027}\\
+GPA: 3.82/4.00 \\ Relevant Coursework: Software Development, Systems Programming, Discrete Mathematics, Linear Algebra, Mathematical Foundations of Machine Learning, Theory of Algorithms, Distributed Systems, Computer Security
+
+\section*{Experience}
+
+\textbf{Driving Forward}\hfill Chicago, IL\\
+\textit{Software Engineer Intern} \hfill June 2025 -- August 2025
+\begin{itemize}
+    \item Engineered a Retrieval-Augmented Generation (RAG) chatbot using Google Gemini, ChromaDB vector database, and semantic embeddings, ingesting and indexing data from \underline{40+} university partner websites to enable context-aware query answering and reduce LLM hallucinations by \underline{60\%}.
+    \item Rebuilt nonprofit web infrastructure on WordPress with a custom PHP theme and optimized frontend performance through critical CSS extraction, asset lazy loading, and a minified build pipeline, improving Core Web Vitals and increasing weekly traffic by \underline{15\%} and pages-per-session by \underline{20\%}.
+    \item Developed and deployed a full-stack LLM application with a React frontend and FastAPI backend exposing REST APIs for conversational retrieval and vector search, deployed on Render with average response latency of \underline{$<$80ms}.
+\end{itemize}
+
+\section*{Projects}
+
+\textbf{Minecraft 3D Structure Generation} -- Generative deep learning for 3D voxel worlds\\
+\href{https://github.com/namdabest253/minecraft-voxelgen}{\textit{github.com/namdabest253/minecraft-voxelgen}} \textbar{} Python, PyTorch, HDF5, Google Colab
+\vspace*{-0.5em}
+\begin{itemize}
+    \item Built an end-to-end deep learning pipeline for 3D voxel generation using a custom Variational Autoencoder (VAE) with residual vector quantization and a latent diffusion prior, compressing $32\times32\times32$ voxel structures (3,717 block types) into a discrete $8\times8\times8$ latent representation with \underline{96\%+} codebook utilization.
+    
+    \item Designed and optimized neural network architecture with a dual-head decoder separating volume prediction and block-type classification, improving reconstruction accuracy from \underline{21.6\% to 66.9\%} after \underline{10} architecture iterations.
+    
+    \item Debugged model training instability by implementing a Straight-Through Estimator and fixing a LayerNorm inverse transform bug in the generation pipeline, recovering \underline{47.5pp} of model accuracy without model retraining.
+\end{itemize}
+
+\textbf{Multi-Agent Research Debate System} -- AI agent framework for structured research decision-making\\
+\href{https://github.com/namdabest253/research-arbiter}{\textit{github.com/namdabest253/research-arbiter}} \textbar{} Python, LLM Agents, Claude Code, arXiv API, Semantic Scholar API
+\vspace*{-0.5em}
+\begin{itemize}
+    \item Architected a multi-agent LLM debate system using \underline{11} Claude Code native agents across three epistemological roles with a supervisor orchestrating 2-round debates, post-debate falsification, and overconfidence calibration.
+    
+    \item Developed a Python CLI integrating arXiv and Semantic Scholar APIs with PDF parsing, citation graph traversal, and knowledge base indexing; implemented caching to reduce repeat query latency to \underline{$<$100ms}.
+    
+    \item Created a research retrieval pipeline that aggregates findings from \underline{15+} academic surveys and injects evidence into agent prompts to mitigate LLM training data cutoff limitations.
+\end{itemize}
+
+\textbf{Rainier Route} -- A public transit and biking integration app for the Seattle Metropolitan\\
+\href{https://github.com/namdabest253/rainierroute}{\textit{github.com/namdabest253/rainierroute}} \textbar{} React, JavaScript, Node.js, Google Maps API, GTFS
+\vspace*{-0.5em}
+\begin{itemize}
+    \item Designed a multi-modal routing engine generating and scoring 5 parallel route
+    combinations (bike-only, transit-only, and 3 bike-to-transit variants) using
+    Haversine distance optimization for nearest-station selection and weighted duration
+    scoring, reducing estimated commute times by up to \underline{20\%}.
+    \item Built a Node.js REST API orchestrating parallel requests across Google Maps
+    Platform (Directions, Places) and GTFS-Realtime feeds from King County Metro and
+    Sound Transit, with Docker-containerized deployment and graceful transit fallback,
+    achieving \underline{under 500ms} per route calculation.
+    \item Built a React frontend with dynamic polyline rendering on Google Maps,
+    visualizing multi-segment routes with distinct bike/transit color coding and
+    turn-by-turn navigation, achieving a \underline{4.3/5} usability rating in user
+    testing.
+\end{itemize}
+
+\textbf{Syncy} -- Cross-platform social music \& universal playlist sharing app\\
+  \href{https://github.com/syncyio534/syncy-backend, https://github.com/syncyio534/syncy-frontend}{\textit{https://github.com/syncyio534/syncy-backend, https://github.com/syncyio534/syncy-frontend}} \textbar{} React, TypeScript, FastAPI,
+  PostgreSQL, OAuth 2.0, Supabase
+  \vspace*{-0.5em}
+  \begin{itemize}
+      \item Built a full-stack playlist conversion platform with a FastAPI async backend and React/TypeScript frontend,
+  integrating \underline{4} music streaming services (Spotify, Apple Music, YouTube Music, SpotAPI) via OAuth 2.0 PKCE,
+  MusicKit JS, and device code flows with encrypted token storage and auto-refresh.
+
+      \item Engineered a track normalization pipeline using ISRC codes for cross-platform matching with a fuzzy search fallback
+   (artist + title + duration tolerance), enabling playlist export across platforms with a \underline{TrackMapping} cache layer
+   to minimize redundant API calls.
+
+      \item Designed a platform-agnostic playlist import system with batch processing, duplicate prevention, and JSONB track
+  metadata storage across \underline{5} database models, supporting multi-select import of user libraries with paginated API
+  fetching from all connected services.
+\end{itemize}
+
+\textbf{Emergency Copilot} -- AI-powered CCTV threat detection and dispatcher alert platform\\
+  \href{https://github.com/Ashy46/emergency-copilot, https://github.com/JohnstonLiu/emergency-copilot-api}{\textit{github.com/Ashy46/emergency-copilot, https://github.com/JohnstonLiu/emergency-copilot-api}} \textbar{} Next.js, TypeScript, Bun, PostgreSQL, Gemini AI, LiveKit, Overshoot SDK
+  \vspace*{-0.5em}
+  \begin{itemize}
+      \item Built a real-time CCTV surveillance platform with a two-stage detection pipeline:
+  Overshoot SDK streaming mode analyzes feeds in \underline{1-second} clips for rapid threat
+  detection, then triggers an extended analysis window whose snapshots are batched (\underline{3--10}
+  per \underline{10-second} window) and fed into Google Gemini 2.5-flash to generate AI incident
+  timelines with state-change tracking and confidence scoring.
+
+      \item Engineered a full-stack real-time alert system using WebSocket snapshot ingestion, SSE
+  broadcast to dispatcher dashboards, and Haversine-based geospatial clustering that automatically
+  groups CCTV incidents within a \underline{50-meter} radius and \underline{1-hour} time window, with
+  LiveKit WebRTC for sub-second latency video streaming to dispatchers.
+
+      \item Designed a dispatcher dashboard with an interactive Leaflet map, live CCTV feed
+  monitoring, and AI-generated event timelines, backed by a Bun + Express.js API with PostgreSQL
+  (Drizzle ORM) and full TypeScript across \underline{4} database tables and \underline{7} custom
+  React hooks.
+\end{itemize}
+
+\section*{Technical Skills}
+\textbf{Languages \& Frameworks:} Python, Java, C, Assembly, JavaScript, HTML, CSS, C\#, Lua, React, Flask, Django, SQL \\
+\textbf{Tools \& Technologies:} GitHub, Git, PyTorch, NumPy, Pandas, Google Colab, WordPress, Unity, Linux, Docker \\
+\textbf{Interest:} Soccer, Geoguessr, Roblox Development, Minecraft, Pokemon, and Cycling \\
+\end{document}

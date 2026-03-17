@@ -1,22 +1,63 @@
 [
   {
-    "name": "Example ML Project",
-    "url": "https://github.com/yourname/ml-project",
-    "description": "A machine learning project that predicts X using Y. Replace this with your actual project.",
-    "technologies": ["Python", "PyTorch", "scikit-learn"],
+    "name": "Minecraft 3D Structure Generation",
+    "url": "https://github.com/namdabest253/minecraft-voxelgen",
+    "description": "Generative deep learning pipeline for 3D voxel world generation. Uses a custom Variational Autoencoder (VAE) with residual vector quantization and a latent diffusion prior to generate 32x32x32 voxel structures with 3,717 block types, compressed into a discrete 8x8x8 latent representation with 96%+ codebook utilization.",
+    "technologies": ["Python", "PyTorch", "HDF5", "Google Colab"],
     "keyDecisions": [
-      "Chose transformer architecture over LSTM because of better long-range dependency handling",
-      "Used cross-validation with stratified splits to handle class imbalance"
+      "Used a dual-head decoder separating volume prediction and block-type classification, improving reconstruction accuracy from 21.6% to 66.9% after 10 architecture iterations",
+      "Implemented a Straight-Through Estimator to handle training instability with discrete latent codes",
+      "Fixed a LayerNorm inverse transform bug in the generation pipeline, recovering 47.5pp of accuracy without retraining",
+      "Chose residual vector quantization over standard VQ-VAE for better codebook utilization"
     ]
   },
   {
-    "name": "Example Web App",
-    "url": "https://github.com/yourname/web-app",
-    "description": "A full-stack web application that does X. Replace this with your actual project.",
-    "technologies": ["TypeScript", "React", "Node.js", "PostgreSQL"],
+    "name": "Multi-Agent Research Debate System",
+    "url": "https://github.com/namdabest253/research-arbiter",
+    "description": "AI agent framework for structured research decision-making. A multi-agent LLM debate system using 11 Claude Code native agents across three epistemological roles with a supervisor orchestrating 2-round debates, post-debate falsification, and overconfidence calibration.",
+    "technologies": ["Python", "LLM Agents", "Claude Code", "arXiv API", "Semantic Scholar API"],
     "keyDecisions": [
-      "Used server-side rendering for SEO and initial load performance",
-      "Chose PostgreSQL over MongoDB for relational data integrity"
+      "Used 11 agents with three distinct epistemological roles to create genuine debate rather than echo-chamber consensus",
+      "Built a research retrieval pipeline aggregating findings from 15+ academic surveys to mitigate LLM training data cutoff limitations",
+      "Implemented caching to reduce repeat query latency to <100ms",
+      "Integrated arXiv and Semantic Scholar APIs with PDF parsing and citation graph traversal for evidence injection into agent prompts"
+    ]
+  },
+  {
+    "name": "Rainier Route",
+    "url": "https://github.com/namdabest253/rainierroute",
+    "description": "A public transit and biking integration app for the Seattle Metropolitan area. Multi-modal routing engine that generates and scores 5 parallel route combinations (bike-only, transit-only, and 3 bike-to-transit variants) using Haversine distance optimization for nearest-station selection.",
+    "technologies": ["React", "JavaScript", "Node.js", "Google Maps API", "GTFS"],
+    "keyDecisions": [
+      "Used Haversine distance optimization for nearest-station selection with weighted duration scoring, reducing estimated commute times by up to 20%",
+      "Built a Node.js REST API orchestrating parallel requests across Google Maps Platform and GTFS-Realtime feeds from King County Metro and Sound Transit",
+      "Docker-containerized deployment with graceful transit fallback, achieving under 500ms per route calculation",
+      "React frontend with dynamic polyline rendering and distinct bike/transit color coding, achieving 4.3/5 usability rating"
+    ]
+  },
+  {
+    "name": "Syncy",
+    "url": "https://github.com/syncyio534/syncy-backend",
+    "description": "Cross-platform social music and universal playlist sharing app. Full-stack playlist conversion platform integrating 4 music streaming services (Spotify, Apple Music, YouTube Music, SpotAPI) via OAuth 2.0 PKCE, MusicKit JS, and device code flows.",
+    "technologies": ["React", "TypeScript", "FastAPI", "PostgreSQL", "OAuth 2.0", "Supabase"],
+    "keyDecisions": [
+      "Used ISRC codes for cross-platform track matching with a fuzzy search fallback (artist + title + duration tolerance) for tracks without ISRC",
+      "Built a TrackMapping cache layer to minimize redundant API calls during playlist conversion",
+      "Implemented OAuth 2.0 PKCE and device code flows with encrypted token storage and auto-refresh across 4 different streaming service auth patterns",
+      "Designed a platform-agnostic playlist import system with batch processing, duplicate prevention, and JSONB track metadata storage across 5 database models"
+    ]
+  },
+  {
+    "name": "Emergency Copilot",
+    "url": "https://github.com/Ashy46/emergency-copilot",
+    "description": "AI-powered CCTV threat detection and dispatcher alert platform. Real-time surveillance system with a two-stage detection pipeline: Overshoot SDK for rapid 1-second clip analysis, then Google Gemini 2.5-flash for extended AI incident timelines with state-change tracking and confidence scoring.",
+    "technologies": ["Next.js", "TypeScript", "Bun", "PostgreSQL", "Gemini AI", "LiveKit", "Overshoot SDK"],
+    "keyDecisions": [
+      "Two-stage detection pipeline: Overshoot SDK streaming mode for rapid threat detection in 1-second clips, then batched snapshots (3-10 per 10-second window) fed into Gemini for detailed incident analysis",
+      "WebSocket snapshot ingestion with SSE broadcast to dispatcher dashboards for real-time alert propagation",
+      "Haversine-based geospatial clustering to group CCTV incidents within 50-meter radius and 1-hour time window automatically",
+      "LiveKit WebRTC for sub-second latency video streaming to dispatchers",
+      "Built with Bun + Express.js API, PostgreSQL with Drizzle ORM, full TypeScript across 4 database tables and 7 custom React hooks"
     ]
   }
 ]
