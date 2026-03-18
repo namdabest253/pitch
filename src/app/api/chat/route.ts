@@ -1,93 +1,76 @@
+import OpenAI from "openai";
 import { getResume, getProjects, getBehavioral } from "@/lib/data";
 import { getSystemPrompt } from "@/lib/claude";
-import { spawnClaude } from "@/lib/spawn-claude";
-import type { ChatRequest } from "@/types";
+import type { ChatRequest, Message } from "@/types";
+
+const openai = new OpenAI();
+
+// Store conversation history per session (in-memory)
+const sessions = new Map<string, { systemPrompt: string; messages: { role: "user" | "assistant"; content: string }[] }>();
+
+function generateSessionId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
 
 export async function POST(request: Request) {
   const { message, mode, sessionId }: ChatRequest = await request.json();
 
-  let systemPrompt: string | undefined;
-  if (!sessionId) {
+  let sid = sessionId;
+  let session = sid ? sessions.get(sid) : undefined;
+
+  if (!session) {
+    sid = generateSessionId();
     const resume = getResume();
     const projects = getProjects();
     const behavioral = getBehavioral();
-    systemPrompt = getSystemPrompt(mode, resume, projects, behavioral);
+    const systemPrompt = getSystemPrompt(mode, resume, projects, behavioral);
+    session = { systemPrompt, messages: [] };
+    sessions.set(sid, session);
   }
 
-  const proc = spawnClaude({
-    message,
-    resumeSessionId: sessionId,
-    systemPrompt,
+  session.messages.push({ role: "user", content: message });
+
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4o",
+    stream: true,
+    messages: [
+      { role: "system", content: session.systemPrompt },
+      ...session.messages,
+    ],
   });
 
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
-    start(controller) {
-      let buffer = "";
+    async start(controller) {
+      // Send session ID immediately
+      controller.enqueue(
+        encoder.encode(`data: ${JSON.stringify({ sessionId: sid })}\n\n`)
+      );
 
-      proc.stdout!.on("data", (data: Buffer) => {
-        buffer += data.toString();
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
+      let fullText = "";
 
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const event = JSON.parse(line);
-
-            if (event.type === "system" && event.subtype === "init") {
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ sessionId: event.session_id })}\n\n`
-                )
-              );
-            }
-
-            if (event.type === "assistant" && event.message?.content) {
-              for (const block of event.message.content) {
-                if (block.type === "text" && block.text) {
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({ text: block.text })}\n\n`
-                    )
-                  );
-                }
-              }
-            }
-
-            if (event.type === "result" && event.result) {
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ result: event.result, sessionId: event.session_id })}\n\n`
-                )
-              );
-            }
-          } catch {
-            // ignore parse errors on partial lines
-          }
+      for await (const chunk of stream) {
+        const delta = chunk.choices[0]?.delta?.content;
+        if (delta) {
+          fullText += delta;
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ text: fullText })}\n\n`)
+          );
         }
-      });
+      }
 
-      proc.stderr!.on("data", (data: Buffer) => {
-        console.error("claude stderr:", data.toString());
-      });
-
-      proc.on("close", (code) => {
-        console.log("claude chat exited with code:", code);
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-      });
-
-      proc.on("error", (err) => {
-        console.error("Failed to spawn claude:", err);
+      // Save assistant response to session
+      if (fullText) {
+        session!.messages.push({ role: "assistant", content: fullText });
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ error: "Failed to start Claude CLI" })}\n\n`
+            `data: ${JSON.stringify({ result: fullText, sessionId: sid })}\n\n`
           )
         );
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-      });
+      }
+
+      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+      controller.close();
     },
   });
 

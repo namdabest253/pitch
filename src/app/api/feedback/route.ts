@@ -1,7 +1,9 @@
+import OpenAI from "openai";
 import { getResume, getProjects, getBehavioral } from "@/lib/data";
 import { getFeedbackPrompt } from "@/lib/claude";
-import { spawnClaude } from "@/lib/spawn-claude";
 import type { FeedbackRequest } from "@/types";
+
+const openai = new OpenAI();
 
 export async function POST(request: Request) {
   const { userMessage, agentQuestion, mode }: FeedbackRequest =
@@ -16,75 +18,40 @@ export async function POST(request: Request) {
 
 The candidate responded: "${userMessage}"
 
-Analyze this response. If the candidate referenced a specific project, fetch code from their GitHub repo to verify their claims. If this is a behavioral answer, compare it to their prepared STAR stories. Give concise, actionable feedback.`;
+Analyze this response. If the candidate referenced a specific project, check their GitHub repo to verify their claims. If this is a behavioral answer, compare it to their prepared STAR stories. Give concise, actionable feedback.`;
 
-  const proc = spawnClaude({
-    message: prompt,
-    systemPrompt,
-    allowedTools: ["WebFetch"],
-    dangerouslySkipPermissions: true,
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4o",
+    stream: true,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: prompt },
+    ],
   });
 
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
-    start(controller) {
-      let buffer = "";
+    async start(controller) {
+      let fullText = "";
 
-      proc.stdout!.on("data", (data: Buffer) => {
-        buffer += data.toString();
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const event = JSON.parse(line);
-
-            if (event.type === "assistant" && event.message?.content) {
-              for (const block of event.message.content) {
-                if (block.type === "text" && block.text) {
-                  controller.enqueue(
-                    encoder.encode(
-                      `data: ${JSON.stringify({ text: block.text })}\n\n`
-                    )
-                  );
-                }
-              }
-            }
-
-            if (event.type === "result" && event.result) {
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ result: event.result })}\n\n`
-                )
-              );
-            }
-          } catch {
-            // ignore parse errors
-          }
+      for await (const chunk of stream) {
+        const delta = chunk.choices[0]?.delta?.content;
+        if (delta) {
+          fullText += delta;
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ text: fullText })}\n\n`)
+          );
         }
-      });
+      }
 
-      proc.stderr!.on("data", (data: Buffer) => {
-        console.error("feedback stderr:", data.toString());
-      });
-
-      proc.on("close", (code) => {
-        console.log("claude feedback exited with code:", code);
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-      });
-
-      proc.on("error", (err) => {
-        console.error("Failed to spawn claude for feedback:", err);
+      if (fullText) {
         controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({ error: "Feedback agent failed to start" })}\n\n`
-          )
+          encoder.encode(`data: ${JSON.stringify({ result: fullText })}\n\n`)
         );
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
-      });
+      }
+
+      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+      controller.close();
     },
   });
 

@@ -27,7 +27,6 @@ export function spawnClaude(opts: {
   }
 
   if (opts.systemPrompt) {
-    // Write to temp file and use cat to avoid arg length / escaping issues
     tmpFile = path.join(os.tmpdir(), `speaker-prompt-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
     fs.writeFileSync(tmpFile, opts.systemPrompt, "utf-8");
     parts.push("--system-prompt", `"$(cat ${shellEscape(tmpFile)})"`);
@@ -36,7 +35,6 @@ export function spawnClaude(opts: {
   if (opts.allowedTools && opts.allowedTools.length > 0) {
     parts.push("--allowedTools", opts.allowedTools.map(shellEscape).join(" "));
   } else if (!opts.resumeSessionId) {
-    // Disable all tools for conversation-only mode
     parts.push("--tools", '""');
   }
 
@@ -45,11 +43,18 @@ export function spawnClaude(opts: {
   }
 
   const cmd = parts.join(" ");
-  const proc = spawn("sh", ["-c", cmd], {
+  console.log("[spawn-claude] Command:", cmd.slice(0, 300) + (cmd.length > 300 ? "..." : ""));
+  console.log("[spawn-claude] Spawning at:", new Date().toISOString());
+
+  // Use setsid to detach from the parent terminal session.
+  // Without this, the claude process inherits the Next.js terminal
+  // and can hang waiting for TTY access.
+  const proc = spawn("setsid", ["sh", "-c", cmd], {
     stdio: ["pipe", "pipe", "pipe"],
   });
 
-  // Clean up temp file when process exits
+  console.log("[spawn-claude] Process PID:", proc.pid);
+
   if (tmpFile) {
     const f = tmpFile;
     proc.on("close", () => {
